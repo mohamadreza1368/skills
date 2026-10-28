@@ -285,7 +285,10 @@ def scan_skill_file(skill_path: Path) -> ScanResult | None:
     for file_path in sorted(skill_path.rglob("*")):
         if not file_path.is_file() or file_path.suffix.lower() not in TEXT_EXTENSIONS:
             continue
-        body = file_path.read_text(encoding="utf-8", errors="replace")
+        try:
+            body = file_path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
         patterns = SECURITY_PATTERNS
         if file_path.name == "SKILL.md":
             body = re.sub(r"^---\s*\n.*?\n---\s*\n?", "", body, count=1, flags=re.DOTALL)
